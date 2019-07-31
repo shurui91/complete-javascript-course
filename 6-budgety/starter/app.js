@@ -27,7 +27,15 @@ var UIController = (function() {
 
 var controller = (function(budgetController, UIController) {
 	// some code
-	var DOM = UIController.getDOMStrings();
+	var setupEventListeners = function() {
+		var DOM = UIController.getDOMStrings();
+		document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
+		document.addEventListener('keypress', function(event) {
+			if (event.keyCode === 13 || event.which === 13) {
+				ctrlAddItem();
+			}
+		});
+	};
 
 	var ctrlAddItem = function() {
 		// code
@@ -41,11 +49,12 @@ var controller = (function(budgetController, UIController) {
 		console.log('it works');
 	};
 
-	document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
-
-	document.addEventListener('keypress', function(event) {
-		if (event.keyCode === 13 || event.which === 13) {
-			ctrlAddItem();
+	return {
+		init: function() {
+			console.log('application has started');
+			setupEventListeners();
 		}
-	});
+	};
 })(budgetController, UIController);
+
+controller.init();
