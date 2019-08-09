@@ -26,6 +26,13 @@ var budgetController = (function() {
 			inc: 0
 		}
 	};
+
+	return {
+		addItem: function(type, des, val) {
+			var newItem;
+			newItem = new Expense(ID, des, val);
+		}
+	};
 })();
 
 var UIController = (function() {
