@@ -4,6 +4,19 @@ var budgetController = (function() {
 		this.id = id;
 		this.description = description;
 		this.value = value;
+		this.percentage = -1;
+	};
+
+	Expense.prototype.calcPercentage = function(totalIncome) {
+		if (totalIncome > 0) {
+			this.percentage = Math.round((this.value / totalIncome) * 100);
+		} else {
+			this.percentage = -1;
+		}
+	};
+
+	Expense.prototype.getPercentage = function() {
+		return this.percentage;
 	};
 
 	var Income = function(id, description, value) {
@@ -85,6 +98,19 @@ var budgetController = (function() {
 				data.percentage = -1;
 			}
 			// Expense = 100 and income 300, spent 33.333% = 100/300 = 0.3333 * 100
+		},
+
+		calculatePercentages: function() {
+			data.allItems.exp.forEach(function(cur) {
+				cur.calcPercentage(data.totals.inc);
+			});
+		},
+
+		getPercentages: function() {
+			var allPerc = data.allItems.exp.map(function(cur) {
+				return cur.getPercentage();
+			});
+			return allPerc;
 		},
 
 		getBudget: function() {
@@ -202,6 +228,17 @@ var UIController = (function() {
 			}
 		},
 
+		displayPercentages: function(percentages) {
+			var fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
+			nodeListForEach(fields, function(current, index) {
+				if (percentages[index] > 0) {
+					current.textContent = percentages[index] + '%';
+				} else {
+					current.textContent = '---';
+				}
+			});
+		},
+
 		getDOMStrings: function() {
 			return DOMStrings;
 		}
@@ -232,6 +269,17 @@ var controller = (function(budgetController, UIController) {
 		UIController.displayBudget(budget);
 	};
 
+	var updatePercentages = function() {
+		// 1. calculate percentages
+		budgetController.calculatePercentages();
+
+		// 2. read percentages from the budget controller
+		var percentages = budgetController.getPercentages();
+
+		// 3. update the UI with the new percentages
+		UIController.displayPercentages(percentages);
+	};
+
 	var ctrlAddItem = function() {
 		// code
 		var input, newItem;
@@ -249,8 +297,8 @@ var controller = (function(budgetController, UIController) {
 			UIController.clearFields();
 			// 5. calculate the budget
 			updateBudget();
-			// 6. display the budget on the UI
-			console.log('it works');
+			// 6. calculate and update percentages
+			updatePercentages();
 		}
 	};
 
@@ -271,6 +319,9 @@ var controller = (function(budgetController, UIController) {
 
 			// 3. update and show the new budget
 			updateBudget();
+
+			// 4. calculate and update percentages
+			updatePercentages();
 		}
 	};
 
