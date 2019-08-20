@@ -1,3 +1,4 @@
+// budget controller
 var budgetController = (function() {
 	// some code
 	var Expense = function(id, description, value) {
@@ -128,6 +129,7 @@ var budgetController = (function() {
 	};
 })();
 
+// UI controller
 var UIController = (function() {
 	// some code
 	var DOMStrings = {
@@ -245,6 +247,7 @@ var UIController = (function() {
 	};
 })();
 
+// global app controller
 var controller = (function(budgetController, UIController) {
 	// some code
 	var setupEventListeners = function() {
